@@ -1,4 +1,11 @@
 gas-oxygen = Oxygen
+gas-ammonia-abbreviation = NH₃
+gas-carbon-dioxide-abbreviation = CO₂
+gas-electrovae-abbreviation = E
+gas-charged-electrovae-abbreviation = E₂
+gas-frezon-abbreviation = F
+gas-nitrogen-abbreviation = N₂
+gas-nitrous-oxide-abbreviation = N₂O
 gas-oxygen-abbreviation = O₂
 gas-nitrogen = Nitrogen
 gas-nitrogen-abbreviation = N₂

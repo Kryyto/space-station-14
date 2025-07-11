@@ -197,7 +197,7 @@ namespace Content.Shared.Atmos
         /// <summary>
         ///     Total number of gases. Increase this if you want to add more!
         /// </summary>
-        public const int TotalNumberOfGases = 9;
+        public const int TotalNumberOfGases = 11;
 
         /// <summary>
         ///     This is the actual length of the gases arrays in mixtures.
@@ -232,6 +232,29 @@ namespace Content.Shared.Atmos
         public const float TritiumBurnOxyFactor = 100f;
         public const float TritiumBurnTritFactor = 10f;
         public const float TritiumBurnFuelRatio = 2f;
+
+        public const float ElectrovaeProductionMaxEfficiencyTemperature = 84.15f;
+        public const float ElectrovaeProductionNitrogenRatio = 10f;
+        public const float ElectrovaeProductionTritRatio = 8.0f;
+        public const float ElectrovaeProductionConversionRate = 80f;
+
+        public const float ElectrovaeChargePowerDrainPerMole = 50000f;
+        public const float ElectrovaeChargeMinimumPowerDrain = 5000f;
+        public const float ElectrovaeChargeMaximumPowerDrain = 100000f;
+        public const float ElectrovaeChargeConversionEfficiency = 0.8f;
+        public const int ElectrovaeChargeSearchRadius = 1;
+
+        public const float ChargedElectrovaeConsumedPerPulse = 1.0f;
+        public const float ChargedElectrovaeMinimumAmount = 1.0f;
+        public const float ChargedElectrovaeBaseReactionChance = 0.2f;
+        public const float ChargedElectrovaeEmpRadius = 4.5f;
+        public const float ChargedElectrovaeEmpEnergy = 120f;
+        public const float ChargedElectrovaeEmpStunDuration = 3f;
+        public const float ChargedElectrovaeEmpChance = 0.3f;
+        public const float ChargedElectrovaeShockRadius = 3f;
+        public const int ChargedElectrovaeShockDamage = 5;
+        public const float ChargedElectrovaeShockDuration = 3f;
+        public const float ChargedElectrovaeShockChance = 0.5f;
 
         public const float FrezonCoolLowerTemperature = 23.15f;
 
@@ -361,6 +384,8 @@ namespace Content.Shared.Atmos
         WaterVapor = 5,
         Ammonia = 6,
         NitrousOxide = 7,
-        Frezon = 8
+        Frezon = 8,
+        Electrovae = 9,
+        ChargedElectrovae = 10
     }
 }
