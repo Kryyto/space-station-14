@@ -92,6 +92,20 @@
 
 - type: entity
   parent: BaseAnomalyCore
+  id: AnomalyCoreRot
+  description: The husk of a lifeless rot anomaly. Pulsates weakly.
+  suffix: Rot
+  components:
+  - type: Sprite
+    sprite: Structures/Specific/Anomalies/Cores/flesh_core.rsi
+  - type: PointLight
+    radius: 1.5
+    energy: 3.5
+    color: "#5b68cb"
+    castShadows: false
+
+- type: entity
+  parent: BaseAnomalyCore
   id: AnomalyCoreRock
   suffix: Rock
   components:
@@ -265,6 +279,20 @@
     radius: 1.5
     energy: 3.5
     color: "#cb5b7e"
+    castShadows: false
+
+- type: entity
+  parent: BaseAnomalyInertCore
+  id: AnomalyCoreRotInert # Can be microwaved to turn it into a massive piece of meat
+  description: The inert husk of a lifeless rot anomaly. Pulsates weakly.
+  suffix: Rot, Inert
+  components:
+  - type: Sprite
+    sprite: Structures/Specific/Anomalies/Cores/flesh_core.rsi
+  - type: PointLight
+    radius: 1.5
+    energy: 3.5
+    color: "#5b68cb"
     castShadows: false
 
 - type: entity

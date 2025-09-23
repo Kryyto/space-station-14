@@ -15,6 +15,7 @@
     - AnomalyGravity
     - AnomalyElectricity
     - AnomalyFlesh
+    - AnomalyRot
     - AnomalyBluespace
     - AnomalyIce
     - RandomRockAnomalySpawner

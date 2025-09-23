@@ -2380,6 +2380,24 @@
     AnomalyCoreFlesh: 1
 
 - type: microwaveMealRecipe
+  id: RecipeInertAnomalyRot
+  name: inert meat anomaly recipe
+  result: FoodMeatAnomaly
+  time: 5
+  group: Savory
+  solids:
+    AnomalyCoreRotInert: 1
+
+- type: microwaveMealRecipe
+  id: RecipeAnomalyRot
+  name: meat anomaly recipe
+  result: FoodMeatAnomaly
+  time: 5
+  group: Savory
+  solids:
+    AnomalyCoreRot: 1
+
+- type: microwaveMealRecipe
   id: RecipeAnomalyMeatCooked
   name: cooked meat anomaly recipe
   result: FoodMeatAnomalyCooked

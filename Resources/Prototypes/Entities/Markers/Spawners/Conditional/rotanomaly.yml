@@ -1,0 +1,18 @@
+- type: entity
+  id: RandomAnomalySpawner
+  name: Rot Anomaly
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: red
+    - sprite: Structures/Specific/anomaly.rsi
+      state: anom1
+  - type: RandomSpawner
+    prototypes:
+    - AnomalyPyroclastic
+    - AnomalyGravity
+    - AnomalyElectricity
+    - AnomalyFlesh
+    - AnomalyBluespace
+    chance: 1

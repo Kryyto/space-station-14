@@ -4,6 +4,11 @@
   - /Audio/Items/Anomaly/flesh_crit.ogg
 
 - type: soundCollection
+  id: AnomalyRotSupercritical
+  files:
+  - /Audio/Items/Anomaly/flesh_crit.ogg
+
+- type: soundCollection
   id: AnomalyShadowSupercritical
   files:
   - /Audio/Items/Anomaly/shadow_crit.ogg
