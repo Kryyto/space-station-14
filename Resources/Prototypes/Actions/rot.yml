@@ -1,0 +1,14 @@
+- type: entity
+  parent: BaseAction
+  id: ActionRotTendril
+  name: rot tendril
+  components:
+  - type: Action
+    icon: { sprite: Textures/Effects/Rot/tendril.rsi, state: segment }
+    useDelay: 1
+    checkCanInteract: false
+    checkConsciousness: false
+    itemIconStyle: NoItem
+    raiseOnUser: true
+  - type: InstantAction
+    event: !type:RotTendrilActionEvent {}

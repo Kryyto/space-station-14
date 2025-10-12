@@ -8,20 +8,7 @@
   "copyright": "Created by Kryyto (github) for space-station-14, credit to Rain World for concepts",
   "states": [
     {
-      "name": "clamp"
-    },
-    {
-      "name": "dead"
-    },
-    {
-      "name": "golem",
-      "directions": 4
-    },
-    {
-      "name": "jared"
-    },
-    {
-      "name": "lover"
+      "name": "daddy_long_legs"
     }
   ]
 }

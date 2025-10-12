@@ -25,9 +25,11 @@
     tags:
     - DoorBumpOpener
     - Flesh
+    - Rot
   - type: Sprite
     drawdepth: Mobs
     sprite: Mobs/Aliens/flesh.rsi
+  - type: RotTendrilVisual
   - type: MovementAlwaysTouching
   - type: MovementSpeedModifier
     baseWalkSpeed: 0.7
@@ -45,10 +47,8 @@
     animationThreshold: 100
   - type: Butcherable
     spawned:
-    - id: FoodRot #TODO
+    - id: FoodMeatRotten
       amount: 1
-  - type: Bloodstream
-    bloodMaxVolume: 100
   - type: CombatMode
   - type: MeleeWeapon
     soundHit:
@@ -60,3 +60,108 @@
         Slash: 6
   - type: ReplacementAccent
     accent: genericAggressive
+
+# Proto Long Legs (small hearing, short grapple)
+- type: entity
+  parent: BaseMobRot
+  id: MobRotProtoLongLegs
+  name: proto long legs
+  description: A nascent rot creature feeling its way through sound.
+  components:
+  - type: Sprite
+    layers:
+    - map: [ "enum.DamageStateVisualLayers.Base" ]
+      state: jared
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: jared
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: RotGrapple
+    grappleRange: 2
+    resistSeconds: 1
+  - type: ActionGrant
+    actions:
+    - ActionRotTendril
+
+# Brother Long Legs
+- type: entity
+  parent: BaseMobRot
+  id: MobRotBrotherLongLegs
+  name: brother long legs
+  description: A rot predator that hunts by sound.
+  components:
+  - type: Sprite
+    layers:
+    - map: [ "enum.DamageStateVisualLayers.Base" ]
+      state: golem
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: golem
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: RotGrapple
+    grappleRange: 4
+    resistSeconds: 2
+  - type: ActionGrant
+    actions:
+    - ActionRotTendril
+
+# Daddy Long Legs
+- type: entity
+  parent: BaseMobRot
+  id: MobRotDaddyLongLegs
+  name: daddy long legs
+  description: A larger rot that drags prey into its maw.
+  components:
+  - type: Sprite
+    sprite: Mobs/Aliens/rot.rsi
+    layers:
+    - map: [ "enum.DamageStateVisualLayers.Base" ]
+      state: daddy_long_legs
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: daddy_long_legs
+      Critical:
+        Base: daddy_long_legs
+      Dead:
+        Base: daddy_long_legs
+  - type: RotGrapple
+    grappleRange: 8
+    resistSeconds: 3
+  - type: ActionGrant
+    actions:
+    - ActionRotTendril
+
+# Mother Long Legs
+- type: entity
+  parent: BaseMobRot
+  id: MobRotMotherLongLegs
+  name: mother long legs
+  description: A colossal rot apex, drawn to any loud disturbance.
+  components:
+  - type: Sprite
+    layers:
+    - map: [ "enum.DamageStateVisualLayers.Base" ]
+      state: lover
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: lover
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: RotGrapple
+    grappleRange: 6
+    resistSeconds: 4
+  - type: ActionGrant
+    actions:
+    - ActionRotTendril

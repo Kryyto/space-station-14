@@ -272,7 +272,23 @@
       - MobFleshClamp
       - MobFleshLover
       - FleshKudzu
-
+  - type: DamageOnToolInteract
+    weldingDamage:
+      types:
+        Heat: 2
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 1
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          AnomalyRot:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
 
 - type: entity
   id: AnomalyRot
@@ -322,17 +338,16 @@
         minRange: 1.5
         maxRange: 2.5
       spawns:
-      - FleshBlocker
+      - MobRotProtoLongLegs
     - settings:
         spawnOnPulse: true
         maxAmount: 3
         minRange: 3
         maxRange: 4.5
       spawns:
-      - MobFleshJared
-      - MobFleshGolem
-      - MobFleshClamp
-      - MobFleshLover
+      - MobRotBrotherLongLegs
+      - MobRotDaddyLongLegs
+      - MobRotMotherLongLegs
     - settings:
         spawnOnSuperCritical: true
         minAmount: 10
@@ -340,34 +355,32 @@
         minRange: 5
         maxRange: 15
       spawns:
-      - FleshBlocker
+      - MobRotProtoLongLegs
     - settings:
         spawnOnSuperCritical: true
         minAmount: 5
         maxAmount: 10
         maxRange: 8
       spawns:
-      - MobFleshJared
-      - MobFleshGolem
-      - MobFleshClamp
-      - MobFleshLover
+      - MobRotBrotherLongLegs
+      - MobRotDaddyLongLegs
+      - MobRotMotherLongLegs
     - settings:
         spawnOnSuperCritical: true
         minAmount: 5
         maxAmount: 8
         maxRange: 10
       spawns:
-      - FleshKudzu
+      - MobRotMotherLongLegs
     - settings:
         spawnOnShutdown: true
         maxAmount: 2
         maxRange: 1
       spawns:
-      - MobFleshJared
-      - MobFleshGolem
-      - MobFleshClamp
-      - MobFleshLover
-      - FleshKudzu
+      - MobRotProtoLongLegs
+      - MobRotBrotherLongLegs
+      - MobRotDaddyLongLegs
+      - MobRotMotherLongLegs
 
 - type: entity
   id: AnomalyBluespace

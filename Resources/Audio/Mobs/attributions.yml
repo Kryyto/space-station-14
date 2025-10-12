@@ -1,0 +1,9 @@
+- files: ["rot_move.ogg"]
+  license: "CC0-1.0"
+  copyright: "Created by freesound user 'greenlinker'. The original audio was trimmed, split to mono, and converted from WAV to OGG format"
+  source: "https://freesound.org/s/757516/"
+
+- files: ["rot_devour.ogg"]
+  license: "CC0-1.0"
+  copyright: "Created by freesound user 'R1nkata'. The original audio was trimmed, split to mono, and converted from WAV to OGG format"
+  source: "https://freesound.org/s/723600/"
