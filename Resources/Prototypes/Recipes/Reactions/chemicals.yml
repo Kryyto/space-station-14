@@ -563,8 +563,6 @@
       amount: 5
     Water:
       amount: 1
-  products:
-    ChargedElectrovae: 5
   effects:
     - !type:CreateGas
       gas: ChargedElectrovae
