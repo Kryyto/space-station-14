@@ -14,6 +14,8 @@ using Content.Shared.Decals;
 using Content.Shared.Doors.Components;
 using Content.Shared.Maps;
 using Content.Shared.Mobs.Components;
+using Content.Shared.Power.Components;
+using Content.Shared.Power.EntitySystems;
 using JetBrains.Annotations;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio.Systems;
@@ -47,6 +49,7 @@ public sealed partial class AtmosphereSystem : SharedAtmosphereSystem
     [Dependency] private readonly DamageableSystem _damage = default!;
     [Dependency] private readonly ElectrocutionSystem _electrocution = default!;
     [Dependency] private readonly BatterySystem _battery = default!;
+    [Dependency] private readonly PredictedBatterySystem _predictedBattery = default!;
 
     private const float ExposedUpdateDelay = 1f;
     private float _exposedTimer = 0f;
@@ -57,6 +60,7 @@ public sealed partial class AtmosphereSystem : SharedAtmosphereSystem
     private EntityQuery<FirelockComponent> _firelockQuery;
     private EntityQuery<ApcPowerReceiverComponent> _powerReceiverQuery;
     private EntityQuery<MobStateComponent> _mobQuery;
+    private EntityQuery<BatteryComponent> _batteryQuery;
     private HashSet<EntityUid> _entSet = new();
 
     private string[] _burntDecals = [];
@@ -72,6 +76,7 @@ public sealed partial class AtmosphereSystem : SharedAtmosphereSystem
         InitializeCVars();
         InitializeGridAtmosphere();
         InitializeMap();
+        InitializeChargedElectrovae();
 
         _atmosQuery = GetEntityQuery<GridAtmosphereComponent>();
         _mapAtmosQuery = GetEntityQuery<MapAtmosphereComponent>();
@@ -79,6 +84,7 @@ public sealed partial class AtmosphereSystem : SharedAtmosphereSystem
         _firelockQuery = GetEntityQuery<FirelockComponent>();
         _powerReceiverQuery = GetEntityQuery<ApcPowerReceiverComponent>();
         _mobQuery = GetEntityQuery<MobStateComponent>();
+        _batteryQuery = GetEntityQuery<BatteryComponent>();
 
         SubscribeLocalEvent<TileChangedEvent>(OnTileChanged);
         SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
