@@ -60,6 +60,7 @@ public sealed partial class AtmosphereSystem : SharedAtmosphereSystem
     private EntityQuery<ApcPowerReceiverComponent> _powerReceiverQuery;
     private EntityQuery<MobStateComponent> _mobQuery;
     private EntityQuery<BatteryComponent> _batteryQuery;
+    private EntityQuery<ChargedElectrovaeAffectedComponent> _chargedElectrovaeQuery;
     private HashSet<EntityUid> _entSet = new();
 
     private string[] _burntDecals = [];
@@ -84,6 +85,7 @@ public sealed partial class AtmosphereSystem : SharedAtmosphereSystem
         _powerReceiverQuery = GetEntityQuery<ApcPowerReceiverComponent>();
         _mobQuery = GetEntityQuery<MobStateComponent>();
         _batteryQuery = GetEntityQuery<BatteryComponent>();
+        _chargedElectrovaeQuery = GetEntityQuery<ChargedElectrovaeAffectedComponent>();
 
         SubscribeLocalEvent<TileChangedEvent>(OnTileChanged);
         SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
