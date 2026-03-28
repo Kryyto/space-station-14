@@ -57,9 +57,15 @@ namespace Content.Server.Atmos.Components
         [ViewVariables]
         public int SuperconductivityTilesCount => SuperconductivityTiles.Count;
 
+        /// <summary>
+        /// Tiles that have charged electrovae gas
+        /// </summary>
         [ViewVariables]
         public readonly HashSet<TileAtmosphere> ChargedElectrovaeTiles = new(1000);
 
+        /// <summary>
+        /// Number of tiles with charged electrovae gas
+        /// </summary>
         [ViewVariables]
         public int ChargedElectrovaeTilesCount => ChargedElectrovaeTiles.Count;
 

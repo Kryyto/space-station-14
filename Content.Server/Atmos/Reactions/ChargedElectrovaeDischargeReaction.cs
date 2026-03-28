@@ -14,20 +14,22 @@ public sealed partial class ChargedElectrovaeDischargeReaction : IGasReactionEff
 {
     public ReactionResult React(GasMixture mixture, IGasMixtureHolder? holder, AtmosphereSystem atmosphereSystem, float heatScale)
     {
-        const float intensityDivisor = 2f;
-        const float dischargeRate = 0.025f;
+        // Exponential decay constant for ChargedElectrovae -> Electrovae conversion.
+        // See: https://en.wikipedia.org/wiki/Exponential_decay
+        // This value must be between 0 and 1 (0 = no decay, 1 = instant decay).
+        const float decayConstant = 0.025f;
 
         var initialCE = mixture.GetMoles(Gas.ChargedElectrovae);
         if (holder is not TileAtmosphere tileAtmos)
             return ReactionResult.NoReaction;
 
-        var intensity = Math.Min(initialCE / intensityDivisor, 1f);
+        var intensity = Math.Min(initialCE / Atmospherics.ChargedElectrovaeIntensityDivisor, 1f);
         atmosphereSystem.ChargedElectrovaeExpose(tileAtmos.GridIndex, tileAtmos, intensity);
 
-        // Slowly discharge: ChargedElectrovae -> Electrovae
-        var dischargeAmount = Math.Min(initialCE * dischargeRate, initialCE);
-        mixture.AdjustMoles(Gas.ChargedElectrovae, -dischargeAmount);
-        mixture.AdjustMoles(Gas.Electrovae, dischargeAmount);
+        // Slowly discharge via exponential decay: ChargedElectrovae -> Electrovae
+        var decayAmount = initialCE * decayConstant;
+        mixture.AdjustMoles(Gas.ChargedElectrovae, -decayAmount);
+        mixture.AdjustMoles(Gas.Electrovae, decayAmount);
 
         return ReactionResult.Reacting;
     }

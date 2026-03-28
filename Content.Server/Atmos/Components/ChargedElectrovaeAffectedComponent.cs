@@ -14,4 +14,11 @@ public sealed partial class ChargedElectrovaeAffectedComponent : Component
     /// </summary>
     [DataField]
     public float? OriginalBatteryMaxCharge;
+
+    /// <summary>
+    /// Original NeedsPower value before charged electrovae bypassed power requirements.
+    /// Null if this entity doesn't have a power receiver or hasn't had its power bypassed yet.
+    /// </summary>
+    [DataField]
+    public bool? OriginalNeedsPower;
 }

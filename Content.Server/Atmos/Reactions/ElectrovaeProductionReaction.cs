@@ -24,14 +24,18 @@ public sealed partial class ElectrovaeProductionReaction : IGasReactionEffect
         var initialH2O = mixture.GetMoles(Gas.WaterVapor);
         var initialCO2 = mixture.GetMoles(Gas.CarbonDioxide);
 
+        // Ratio of water vapor consumed per reaction set.
         const float h2oRatio = 2f;
+        // Ratio of nitrous oxide consumed per reaction set.
         const float n2oRatio = 11f;
+        // Minimum combined efficiency (0-1) below which the reaction does not proceed.
         const float minimumEfficiency = 0.01f;
-        const float inhibitorSensitivity = 0.05f; // 5% CO2 causes 50% inhibition
+        // CO2 proportion at which the inhibition factor reaches 50%. Higher values = less sensitive.
+        const float inhibitorSensitivity = 0.05f;
 
         // The amount of catalyst determines the MAXIMUM amount of reaction that can occur.
         // 6% is the optimal catalyst proportion. We calculate a catalyst factor.
-        var totalMoles = initialN2 + initialH2O + initialN2O + initialCO2;
+        var totalMoles = mixture.TotalMoles;
 
         var catalystProportion = initialN2 / totalMoles;
         var catalystFactor = Math.Clamp(catalystProportion / Atmospherics.ElectrovaeProductionNitrogenRatio, 0f, 1f);
@@ -39,7 +43,7 @@ public sealed partial class ElectrovaeProductionReaction : IGasReactionEffect
         // CO2 acts as an inhibitor, higher concentrations reduce reaction rate
         var inhibitorProportion = initialCO2 / totalMoles;
         var inhibitorFactor = Math.Clamp(1f - inhibitorProportion / inhibitorSensitivity, 0f, 1f);
-        if (inhibitorFactor < minimumEfficiency)
+        if (catalystFactor * inhibitorFactor < minimumEfficiency)
             return ReactionResult.NoReaction;
 
         // Find the limiting reactant, respecting the 2:11 ratio.
@@ -52,12 +56,12 @@ public sealed partial class ElectrovaeProductionReaction : IGasReactionEffect
         possibleSets *= inhibitorFactor;
 
         // Arrhenius: Yield is highest at high temperatures and drops to zero as temperature decreases.
-        var efficiency = CalculateArrheniusEfficiency(mixture.Temperature);
-        if (efficiency < minimumEfficiency)
+        var arrheniusEfficiency = CalculateArrheniusEfficiency(mixture.Temperature);
+        if (arrheniusEfficiency * catalystFactor * inhibitorFactor < minimumEfficiency)
             return ReactionResult.NoReaction;
 
-        // Scale the reaction by the inverse thermal efficiency.
-        var reactionSets = possibleSets * efficiency;
+        // Scale the reaction by the thermal efficiency.
+        var reactionSets = possibleSets * arrheniusEfficiency;
 
         var h2oUsed = reactionSets * h2oRatio;
         var n2oUsed = reactionSets * n2oRatio;
@@ -68,7 +72,7 @@ public sealed partial class ElectrovaeProductionReaction : IGasReactionEffect
         mixture.AdjustMoles(Gas.Electrovae, electrovaeProduced);
         mixture.AdjustMoles(Gas.Oxygen, electrovaeProduced);
 
-        return (reactionSets > minimumEfficiency) ? ReactionResult.Reacting : ReactionResult.NoReaction;
+        return reactionSets > 0 ? ReactionResult.Reacting : ReactionResult.NoReaction;
     }
 
     private static float CalculateArrheniusEfficiency(float temperature)

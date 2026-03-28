@@ -15,15 +15,17 @@ public sealed partial class ElectrovaeChargeReaction : IGasReactionEffect
 {
     public ReactionResult React(GasMixture mixture, IGasMixtureHolder? holder, AtmosphereSystem atmosphereSystem, float heatScale)
     {
-        const float minimumMolesToReact = 0.01f;
-        const float chargeRateMultiplier = 0.1f;
-
-        var initialE = mixture.GetMoles(Gas.Electrovae);
         if (holder is not TileAtmosphere tileAtmos)
             return ReactionResult.NoReaction;
 
+        // Minimum efficiency (0-1) below which the reaction does not proceed.
+        const float minimumEfficiency = 0.01f;
+        // Fraction of electrovae converted per unit efficiency per reaction cycle.
+        const float chargeRateMultiplier = 0.1f;
+
+        var initialE = mixture.GetMoles(Gas.Electrovae);
         var efficiency = CalculateHeatBasedEfficiency(mixture.Temperature);
-        if (efficiency < minimumMolesToReact)
+        if (efficiency < minimumEfficiency)
             return ReactionResult.NoReaction;
 
         // Scale the reaction by efficiency and available electrovae
@@ -33,19 +35,12 @@ public sealed partial class ElectrovaeChargeReaction : IGasReactionEffect
         mixture.AdjustMoles(Gas.ChargedElectrovae, chargeAmount);
 
         // Expose the tile to charged electrovae - AtmosphereSystem will handle the rest
-        const float intensityDivisor = 2f;
-        var intensity = Math.Min(mixture.GetMoles(Gas.ChargedElectrovae) / intensityDivisor, 1f);
+        var intensity = Math.Min(mixture.GetMoles(Gas.ChargedElectrovae) / Atmospherics.ChargedElectrovaeIntensityDivisor, 1f);
         atmosphereSystem.ChargedElectrovaeExpose(tileAtmos.GridIndex, tileAtmos, intensity);
 
         // Consume some heat energy during the charging process
-        const float energyPerMole = 5000f; // 5kJ per mole
-        var oldHeatCapacity = atmosphereSystem.GetHeatCapacity(mixture, true);
-        if (oldHeatCapacity > Atmospherics.MinimumHeatCapacity)
-        {
-            var maxEnergyRemovable = oldHeatCapacity * (mixture.Temperature - Atmospherics.TCMB);
-            var energyToConsume = Math.Min(chargeAmount * energyPerMole, maxEnergyRemovable);
-            mixture.Temperature -= energyToConsume / oldHeatCapacity;
-        }
+        const float energyPerMole = 5000f; // Energy consumed per mole charged, in joules
+        atmosphereSystem.AddHeat(mixture, -chargeAmount * energyPerMole);
 
         return ReactionResult.Reacting;
     }
@@ -56,9 +51,9 @@ public sealed partial class ElectrovaeChargeReaction : IGasReactionEffect
     private static float CalculateHeatBasedEfficiency(float temperature)
     {
         // Efficient above 1508K, peaks around 1984K+
-        const float minTemp = 1508f;
-        const float maxTemp = 1984f;
-        const float temperatureExponent = 1.2f;
+        const float minTemp = 1508f; // Minimum temperature for reaction to occur
+        const float maxTemp = 1984f; // Maximum temperature for reaction to occur
+        const float temperatureExponent = 1.2f; // Exponent for temperature scaling
 
         if (temperature < minTemp)
             return 0f;
