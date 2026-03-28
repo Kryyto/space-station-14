@@ -69,8 +69,11 @@ public sealed partial class AtmosphereSystem
             RestoreBatteryCapacity((ent, battery, ent.Comp));
 
         // Restore power requirements if this entity had them bypassed
-        if (_powerReceiverQuery.TryComp(ent, out var receiver))
-            receiver.NeedsPower = true;
+        if (ent.Comp.OriginalNeedsPower != null && _powerReceiverQuery.TryComp(ent, out var receiver))
+        {
+            receiver.NeedsPower = ent.Comp.OriginalNeedsPower.Value;
+            ent.Comp.OriginalNeedsPower = null;
+        }
     }
 
     public void ChargedElectrovaeExpose(Entity<GridAtmosphereComponent?> ent, TileAtmosphere tile, float intensity)
@@ -136,19 +139,18 @@ public sealed partial class AtmosphereSystem
 
         foreach (var entity in _entSet)
         {
-            // Mark entity as affected by charged electrovae
-            var electrovaeAffectedComp = EnsureComp<ChargedElectrovaeAffectedComponent>(entity);
-
             // Handle batteries - expand capacity and trigger charge rate refresh
-            if (_batteryQuery.HasComponent(entity))
+            if (_batteryQuery.TryComp(entity, out var battery))
             {
-                ProcessBattery((entity, electrovaeAffectedComp), tile.ChargedEffect.Intensity, chargedMoles);
+                var affectedComp = EnsureComp<ChargedElectrovaeAffectedComponent>(entity);
+                ProcessBattery((entity, battery, affectedComp), tile.ChargedEffect.Intensity, chargedMoles);
             }
 
             // Power machines directly (bypass normal power requirement)
             if (_powerReceiverQuery.TryGetComponent(entity, out var receiver))
             {
-                ApplyChargedElectrovaePower(receiver, tile.ChargedEffect.Intensity);
+                var affectedComp = EnsureComp<ChargedElectrovaeAffectedComponent>(entity);
+                ApplyChargedElectrovaePower((entity, affectedComp), receiver, tile.ChargedEffect.Intensity);
             }
 
             // Lightning strikes on mobs
@@ -214,21 +216,17 @@ public sealed partial class AtmosphereSystem
     /// Processes a battery in charged electrovae gas.
     /// Expands battery capacity asymptotically and refreshes charge rate for batteries.
     /// </summary>
-    private void ProcessBattery(Entity<ChargedElectrovaeAffectedComponent?> ent, float intensity, float chargedMoles)
+    private void ProcessBattery(Entity<BatteryComponent, ChargedElectrovaeAffectedComponent> ent, float intensity, float chargedMoles)
     {
         const float minimumIntensityToCharge = 0.1f;
 
-        if (!_batteryQuery.TryComp(ent, out var batteryComp) ||
-            !_chargedElectrovaeQuery.Resolve(ent, ref ent.Comp))
-            return;
-
         if (intensity > minimumIntensityToCharge)
         {
-            ExpandBatteryCapacity((ent, batteryComp, ent.Comp), chargedMoles);
+            ExpandBatteryCapacity(ent, chargedMoles);
         }
         else
         {
-            RestoreBatteryCapacity((ent, batteryComp, ent.Comp));
+            RestoreBatteryCapacity(ent);
         }
     }
 
@@ -279,6 +277,7 @@ public sealed partial class AtmosphereSystem
     /// This bypasses normal APC power requirements.
     /// </summary>
     private static void ApplyChargedElectrovaePower(
+        Entity<ChargedElectrovaeAffectedComponent> ent,
         ApcPowerReceiverComponent receiver,
         float intensity)
     {
@@ -286,11 +285,17 @@ public sealed partial class AtmosphereSystem
 
         if (intensity < minimumIntensityToPower)
         {
-            if (!receiver.NeedsPower)
-                receiver.NeedsPower = true;
+            // Restore original NeedsPower if we previously bypassed it
+            if (ent.Comp.OriginalNeedsPower != null)
+            {
+                receiver.NeedsPower = ent.Comp.OriginalNeedsPower.Value;
+                ent.Comp.OriginalNeedsPower = null;
+            }
             return;
         }
 
+        // Store original value before bypassing
+        ent.Comp.OriginalNeedsPower ??= receiver.NeedsPower;
         receiver.NeedsPower = false;
     }
 

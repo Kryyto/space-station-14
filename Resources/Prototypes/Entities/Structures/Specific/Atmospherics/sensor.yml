@@ -27,10 +27,6 @@
       Frezon: danger
       Electrovae: danger
       ChargedElectrovae: danger
-  - type: Tag
-    tags:
-      - AirSensor
-      - ForceFixRotations
   - type: GuideHelp
     guides:
     - DeviceMonitoringAndControl
