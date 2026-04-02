@@ -120,28 +120,32 @@
 
 - type: gas
   id: Electrovae
-  name: gases-electrovae
-  specificHeat: 250
+  name: gas-electrovae
+  abbreviation: gas-electrovae-abbreviation
+  molarHeatCapacity: 250
   heatCapacityRatio: 1.28
   molarMass: 520
-  gasOverlaySprite: /Textures/Effects/atmospherics.rsi
-  gasOverlayState: electrovae
+  gasOverlaySprite:
+    sprite: /Textures/Effects/atmospherics.rsi
+    state: electrovae
   gasMolesVisible: 0.1
-  gasVisbilityFactor: 2.0
-  color: 0022ff
+  gasVisibilityFactor: 2.0
+  color: '#0022ff'
   reagent: Electrovae
   pricePerMole: 0.05
 
 - type: gas
   id: ChargedElectrovae
-  name: gases-charged-electrovae
-  specificHeat: 150
+  name: gas-charged-electrovae
+  abbreviation: gas-charged-electrovae-abbreviation
+  molarHeatCapacity: 150
   heatCapacityRatio: 1.30
   molarMass: 520
-  gasOverlaySprite: /Textures/Effects/atmospherics.rsi
-  gasOverlayState: electrovae_charged
+  gasOverlaySprite:
+    sprite: /Textures/Effects/atmospherics.rsi
+    state: electrovae_charged
   gasMolesVisible: 1.0
-  gasVisbilityFactor: 3.0
-  color: ddff00
+  gasVisibilityFactor: 3.0
+  color: '#ddff00'
   reagent: ChargedElectrovae
   pricePerMole: 1.2

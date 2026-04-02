@@ -1,4 +1,4 @@
-namespace Content.Server.Atmos;
+namespace Content.Shared.Atmos;
 
 /// <summary>
 /// Stores charged electrovae effect state for a tile.
