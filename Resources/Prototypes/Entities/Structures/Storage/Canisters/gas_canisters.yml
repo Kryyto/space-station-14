@@ -779,8 +779,20 @@
   - type: Sprite
     layers:
     - state: electrovae
+    - state: paper
+      visible: false
+      map: [ "enum.PaperLabelVisuals.Layer" ]
+    - state: integrity-unshaded-0
+      map: [ "enum.MaxPressureVisualLayers.BaseUnshaded" ]
+      shader: unshaded
+      visible: false
+    - state: mask-electrovae
+      map: [ "enum.MaxPressureVisualLayers.Base" ]
+      visible: false
+  - type: MaxPressureVisuals
+    integrityMask: mask-electrovae
   - type: GasCanister
-    gasMixture:
+    air:
       volume: 1500
       moles:
         Electrovae: 2769.36
@@ -819,9 +831,21 @@
   components:
   - type: Sprite
     layers:
-    - state: electrovae
+    - state: chargedelectrovae
+    - state: paper
+      visible: false
+      map: [ "enum.PaperLabelVisuals.Layer" ]
+    - state: integrity-unshaded-0
+      map: [ "enum.MaxPressureVisualLayers.BaseUnshaded" ]
+      shader: unshaded
+      visible: false
+    - state: mask-chargedelectrovae
+      map: [ "enum.MaxPressureVisualLayers.Base" ]
+      visible: false
+  - type: MaxPressureVisuals
+    integrityMask: mask-chargedelectrovae
   - type: GasCanister
-    gasMixture:
+    air:
       volume: 1500
       moles:
         ChargedElectrovae: 2769.36
@@ -1025,4 +1049,4 @@
   categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
-    state: electrovae-1
+    state: chargedelectrovae-1
