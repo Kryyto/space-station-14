@@ -4,6 +4,7 @@ using System.Text;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Server.Chat.Managers;
+using Content.Server.Chat.Translation;
 using Content.Server.GameTicking;
 using Content.Server.Speech.EntitySystems;
 using Content.Server.Speech.Prototypes;
@@ -667,13 +668,37 @@ public sealed partial class ChatSystem : SharedChatSystem
     /// </summary>
     private void SendInVoiceRange(ChatChannel channel, string message, string wrappedMessage, EntityUid source, ChatTransmitRange range, NetUserId? author = null)
     {
+        // Build recipient dict, filtering disallowed entries first.
+        var recipients = new Dictionary<ICommonSession, (string Message, string WrappedMessage, bool HideChat)>();
         foreach (var (session, data) in GetRecipients(source, VoiceRange))
         {
             var entRange = MessageRangeCheck(session, data, range);
             if (entRange == MessageRangeCheckResult.Disallowed)
                 continue;
             var entHideChat = entRange == MessageRangeCheckResult.HideChat;
-            _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author);
+            recipients[session] = (message, wrappedMessage, entHideChat);
+        }
+
+        // Give translation system a chance to intercept and fan-out per language.
+        // If BeforeVoiceRangeSendEvent clears the dict, no direct send happens here.
+        var ev = new BeforeVoiceRangeSendEvent
+        {
+            Message = message,
+            WrappedMessage = wrappedMessage,
+            Source = source,
+            Channel = channel,
+            Recipients = recipients,
+            RewrapCallback = translated =>
+                wrappedMessage.Replace(
+                    FormattedMessage.EscapeText(message),
+                    FormattedMessage.EscapeText(translated)),
+        };
+        RaiseLocalEvent(ref ev);
+
+        // Send to any remaining (non-intercepted) recipients.
+        foreach (var (session, data) in ev.Recipients)
+        {
+            _chatManager.ChatMessageToOne(channel, data.Message, data.WrappedMessage, source, data.HideChat, session.Channel, author: author);
         }
 
         _replay.RecordServerMessage(new ChatMessage(channel, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range)));

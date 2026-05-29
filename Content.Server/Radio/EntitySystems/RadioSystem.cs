@@ -1,5 +1,6 @@
 using Content.Server.Administration.Logs;
 using Content.Server.Chat.Systems;
+using Content.Server.Chat.Translation;
 using Content.Server.Power.Components;
 using Content.Shared.Chat;
 using Content.Shared.Database;
@@ -117,6 +118,8 @@ public sealed partial class RadioSystem : EntitySystem
         var hasActiveServer = HasActiveServer(sourceMapId, channel.ID);
         var sourceServerExempt = _exemptQuery.HasComp(radioSource);
 
+        // Collect eligible receivers before dispatching so BeforeRadioSendEvent can intercept.
+        var eligibleReceivers = new List<EntityUid>();
         var radioQuery = EntityQueryEnumerator<ActiveRadioComponent, TransformComponent>();
         while (canSend && radioQuery.MoveNext(out var receiver, out var radio, out var transform))
         {
@@ -142,8 +145,42 @@ public sealed partial class RadioSystem : EntitySystem
             if (attemptEv.Cancelled)
                 continue;
 
-            // send the message
-            RaiseLocalEvent(receiver, ref ev);
+            eligibleReceivers.Add(receiver);
+        }
+
+        // Build per-channel recipient dict for translation fan-out.
+        var radioRecipients = new Dictionary<INetChannel, (string Message, string WrappedMessage)>();
+        foreach (var receiver in eligibleReceivers)
+        {
+            if (TryComp(receiver, out ActorComponent? actor))
+                radioRecipients[actor.PlayerSession.Channel] = (message, wrappedMessage);
+        }
+
+        // Give translation system a chance to intercept.
+        var beforeEv = new BeforeRadioSendEvent
+        {
+            Message = message,
+            WrappedMessage = wrappedMessage,
+            MessageSource = messageSource,
+            Recipients = radioRecipients,
+            RewrapCallback = translated =>
+                wrappedMessage.Replace(
+                    escapeMarkup ? FormattedMessage.EscapeText(message) : message,
+                    escapeMarkup ? FormattedMessage.EscapeText(translated) : translated),
+        };
+        RaiseLocalEvent(ref beforeEv);
+
+        // For non-player receivers (intercoms, etc.) that were eligible, still send via event.
+        foreach (var receiver in eligibleReceivers)
+        {
+            if (!TryComp(receiver, out ActorComponent? _))
+                RaiseLocalEvent(receiver, ref ev);
+        }
+
+        // Send to any remaining player recipients not intercepted by translation.
+        foreach (var (netChannel, data) in beforeEv.Recipients)
+        {
+            _netMan.ServerSendMessage(new MsgChatMessage { Message = new ChatMessage(ChatChannel.Radio, data.Message, data.WrappedMessage, NetEntity.Invalid, null) }, netChannel);
         }
 
         if (name != Name(messageSource))
